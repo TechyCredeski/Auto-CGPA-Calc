@@ -1,23 +1,31 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 type Props = {};
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
+  const {push} = useRouter();
   const [fullName, setFullName] = useState("")
-  const [fullName, setFullName] = useState("")
-  const [fullName, setFullName] = useState("")
-  const handleSubmit = async () => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const handleSubmit = async (e:React.FormEvent) => {
+    e.preventDefault()
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/registers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ fullName, email, password }),
       });
-    } catch (error) {}
+      if(response.ok){
+        push("/login")
+      }
+    } catch (error) {
+
+    }
   };
   return (
     <main className="bg-[#51aa55] h-[90vh] gap-5 flex flex-col items-center justify-center">
@@ -28,6 +36,7 @@ const page = (props: Props) => {
       >
         <p className="text-2xl font-bold text-[#145d01]">Sign-Up</p>
         <input
+          onChange={(e) => setFullName(e.currentTarget.value)}
           required
           name="fullName"
           className="bg-[#d0c9c9] text-sm px-4 py-3 text-white rounded-md w-64"
@@ -36,6 +45,7 @@ const page = (props: Props) => {
         />
         <input
           required
+          onChange={(e) => setEmail(e.currentTarget.value)}
           name="email"
           className="bg-[#d0c9c9] text-sm px-4 py-3 text-white rounded-md w-64"
           placeholder="Email"
@@ -43,6 +53,7 @@ const page = (props: Props) => {
         />
         <input
           required
+          onChange={(e) => setPassword(e.currentTarget.value)}
           name="password"
           className="bg-[#d0c9c9] py-3 px-4 text-sm rounded-md w-64"
           placeholder="Enter Password"
@@ -62,4 +73,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page;

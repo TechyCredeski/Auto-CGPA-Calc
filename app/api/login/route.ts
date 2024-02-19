@@ -5,17 +5,16 @@ interface RegisterBody {
   password: string;
 }
 export const POST = async (req: Request) => {
-  const { fullName , email , password } = (await req.json()) as RegisterBody;
+  const { email , password } = (await req.json()) as RegisterBody;
   try {
-    await prisma.user.create({
-        data: {
-          fullName,
+    await prisma.user.findUnique({
+
+        where: {
           email,
-          password
         },
       });
   } catch (error) {
-    return new Response("Failed To Create", { status: 500 }); 
+    return new Response("Unable to login", { status: 500 }); 
   }
   
 };
