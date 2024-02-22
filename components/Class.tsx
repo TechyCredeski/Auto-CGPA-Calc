@@ -48,7 +48,7 @@ export function Classess() {
             <nav className="flex flex-col h-full bg-[#51ae55] text-white  px-4 text-sm font-medium">
               <Link
                 className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="#"
+                href="/dashboard"
                 passHref
               >
                 <HomeIcon className="h-4 w-4" />
@@ -56,7 +56,7 @@ export function Classess() {
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="#"
+                href="/classes"
                 passHref
               >
                 <UsersIcon className="h-4 w-4" />
@@ -64,7 +64,7 @@ export function Classess() {
               </Link>
               <Link
                 className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="#"
+                href="/student-page"
                 passHref
               >
                 <PackageIcon className="h-4 w-4" />
@@ -241,7 +241,7 @@ export function Classess() {
   );
 }
 
-function Package2Icon(props) {
+function Package2Icon(props:any) {
   return (
     <svg
       {...props}
@@ -262,7 +262,7 @@ function Package2Icon(props) {
   );
 }
 
-function BellIcon(props) {
+function BellIcon(props:any) {
   return (
     <svg
       {...props}
@@ -282,7 +282,7 @@ function BellIcon(props) {
   );
 }
 
-function HomeIcon(props) {
+function HomeIcon(props:any) {
   return (
     <svg
       {...props}
@@ -302,7 +302,7 @@ function HomeIcon(props) {
   );
 }
 
-function UsersIcon(props) {
+function UsersIcon(props:any) {
   return (
     <svg
       {...props}
@@ -324,7 +324,7 @@ function UsersIcon(props) {
   );
 }
 
-function PackageIcon(props) {
+function PackageIcon(props:any) {
   return (
     <svg
       {...props}
@@ -346,7 +346,7 @@ function PackageIcon(props) {
   );
 }
 
-function LineChartIcon(props) {
+function LineChartIcon(props:any) {
   return (
     <svg
       {...props}
@@ -366,7 +366,7 @@ function LineChartIcon(props) {
   );
 }
 
-function SearchIcon(props) {
+function SearchIcon(props:any) {
   return (
     <svg
       {...props}
