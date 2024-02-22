@@ -2,27 +2,41 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, FormEventHandler, useState } from "react";
+import toast from "react-hot-toast";
 
 type Props = {};
 
 const Page = (props: Props) => {
-  const { push } = useRouter();
+  const { replace } = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     try {
-      const response = await fetch("/api/logins", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
-      if (response.ok) {
-        push("/dashboard");
+      if (response.status === 200) {
+        replace("/dashboard");
       }
-    } catch (error) {}
+      if (response.status === 500) {
+        setLoading(false);
+        toast.error("Something went wrong");
+      }
+      if (response.status === 404) {
+        setLoading(false);
+        toast.error("User not found");
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("Something went wrong");
+    }
   };
   return (
     <main className="bg-[#51aa55] h-[90vh] gap-5 flex flex-col items-center justify-center">
@@ -35,19 +49,23 @@ const Page = (props: Props) => {
         <input
           onChange={(e) => setEmail(e.currentTarget.value)}
           required
-          className="bg-[#d0c9c9] text-sm px-4 py-3 text-white rounded-md w-64"
+          className="bg-[#d0c9c9] text-sm px-4 py-3 text-black rounded-md w-64"
           placeholder="Email"
           type="email"
         />
         <input
           required
           onChange={(e) => setPassword(e.currentTarget.value)}
-          className="bg-[#d0c9c9] py-3 px-4 text-sm rounded-md w-64"
+          className="bg-[#d0c9c9] py-3 px-4 text-black rounded-md w-64"
           placeholder="Password"
           type="Password"
         />
         <p className="text-[#51aa55] ">Forgot Password?</p>
-        <button className="w-64 bg-[#51aa55] py-3 px-4 border rounded-md">
+        <button
+          className={`w-64 ${
+            loading ? "pointer-events-none opacity-40" : ""
+          } bg-[#51aa55] py-3 px-4 border rounded-md`}
+        >
           LogIn
         </button>
         <Link href="/register">

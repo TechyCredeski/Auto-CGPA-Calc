@@ -166,7 +166,7 @@ export function Class() {
                   <TableCell>Part-Time</TableCell>
                   <TableCell className="flex gap-1">
                     <button className="border px-4 py-1 rounded-md text-xs">
-                      View
+                      <Link href="/class-page">View</Link>
                     </button>
                     <button className="bg-red-700  text-white border px-4 py-1 rounded-md text-xs">
                       Delete
@@ -324,7 +324,7 @@ export function Class() {
                   <TableCell>Computer Science</TableCell>
                   <TableCell className="flex gap-1">
                     <button className="border px-4 py-1 rounded-md text-xs">
-                    View
+                      View
                     </button>
                     <button className="bg-red-700  text-white border px-4 py-1 rounded-md text-xs">
                       Delete
@@ -340,7 +340,7 @@ export function Class() {
   );
 }
 
-function Package2Icon(props:any) {
+function Package2Icon(props: any) {
   return (
     <svg
       {...props}
@@ -361,7 +361,7 @@ function Package2Icon(props:any) {
   );
 }
 
-function BellIcon(props:any) {
+function BellIcon(props: any) {
   return (
     <svg
       {...props}
@@ -381,7 +381,7 @@ function BellIcon(props:any) {
   );
 }
 
-function HomeIcon(props:any) {
+function HomeIcon(props: any) {
   return (
     <svg
       {...props}
@@ -401,7 +401,7 @@ function HomeIcon(props:any) {
   );
 }
 
-function UsersIcon(props:any) {
+function UsersIcon(props: any) {
   return (
     <svg
       {...props}
@@ -423,7 +423,7 @@ function UsersIcon(props:any) {
   );
 }
 
-function PackageIcon(props:any) {
+function PackageIcon(props: any) {
   return (
     <svg
       {...props}
@@ -445,7 +445,7 @@ function PackageIcon(props:any) {
   );
 }
 
-function LineChartIcon(props:any) {
+function LineChartIcon(props: any) {
   return (
     <svg
       {...props}
@@ -465,7 +465,7 @@ function LineChartIcon(props:any) {
   );
 }
 
-function SearchIcon(props:any) {
+function SearchIcon(props: any) {
   return (
     <svg
       {...props}
@@ -484,4 +484,3 @@ function SearchIcon(props:any) {
     </svg>
   );
 }
-
