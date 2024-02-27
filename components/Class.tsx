@@ -62,14 +62,6 @@ export function Classess() {
                 <UsersIcon className="h-4 w-4" />
                 Classes
               </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="/student-page"
-                passHref
-              >
-                <PackageIcon className="h-4 w-4" />
-                Grading
-              </Link>
             </nav>
           </div>
           {/* <div className="mt-auto p-4">
@@ -115,17 +107,6 @@ export function Classess() {
                 size="icon"
                 variant="ghost"
               >
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="32"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "32/32",
-                    objectFit: "cover",
-                  }}
-                  width="32"
-                />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -241,7 +222,7 @@ export function Classess() {
   );
 }
 
-function Package2Icon(props:any) {
+function Package2Icon(props: any) {
   return (
     <svg
       {...props}
@@ -262,7 +243,7 @@ function Package2Icon(props:any) {
   );
 }
 
-function BellIcon(props:any) {
+function BellIcon(props: any) {
   return (
     <svg
       {...props}
@@ -282,7 +263,7 @@ function BellIcon(props:any) {
   );
 }
 
-function HomeIcon(props:any) {
+function HomeIcon(props: any) {
   return (
     <svg
       {...props}
@@ -302,7 +283,7 @@ function HomeIcon(props:any) {
   );
 }
 
-function UsersIcon(props:any) {
+function UsersIcon(props: any) {
   return (
     <svg
       {...props}
@@ -324,7 +305,7 @@ function UsersIcon(props:any) {
   );
 }
 
-function PackageIcon(props:any) {
+function PackageIcon(props: any) {
   return (
     <svg
       {...props}
@@ -346,7 +327,7 @@ function PackageIcon(props:any) {
   );
 }
 
-function LineChartIcon(props:any) {
+function LineChartIcon(props: any) {
   return (
     <svg
       {...props}
@@ -366,7 +347,7 @@ function LineChartIcon(props:any) {
   );
 }
 
-function SearchIcon(props:any) {
+function SearchIcon(props: any) {
   return (
     <svg
       {...props}

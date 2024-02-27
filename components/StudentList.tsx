@@ -156,14 +156,6 @@ export function StudentList() {
                 <UsersIcon className="h-4 w-4" />
                 Classes
               </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="/student-page"
-                passHref
-              >
-                <PackageIcon className="h-4 w-4" />
-                Grading
-              </Link>
             </nav>
           </div>
           {/* <div className="mt-auto p-4">
@@ -209,17 +201,6 @@ export function StudentList() {
                 size="icon"
                 variant="ghost"
               >
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="32"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "32/32",
-                    objectFit: "cover",
-                  }}
-                  width="32"
-                />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>

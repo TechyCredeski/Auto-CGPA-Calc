@@ -86,8 +86,6 @@ export function StudentPages() {
     }
   };
 
-  
-
   const DeleteStudent = async (ids: string) => {
     setDeleting(true);
     try {
@@ -234,14 +232,6 @@ export function StudentPages() {
                 <UsersIcon className="h-4 w-4" />
                 Classes
               </Link>
-              <Link
-                className="flex items-center gap-3 rounded-lg  px-3 py-2   transition-all "
-                href="/student-page"
-                passHref
-              >
-                <PackageIcon className="h-4 w-4" />
-                Grading
-              </Link>
             </nav>
           </div>
           {/* <div className="mt-auto p-4">
@@ -287,17 +277,6 @@ export function StudentPages() {
                 size="icon"
                 variant="ghost"
               >
-                <img
-                  alt="Avatar"
-                  className="rounded-full"
-                  height="32"
-                  src="/placeholder.svg"
-                  style={{
-                    aspectRatio: "32/32",
-                    objectFit: "cover",
-                  }}
-                  width="32"
-                />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -464,7 +443,9 @@ export function StudentPages() {
               <p>GPA: {wpaFirst / totalCourseUnitFirst}</p>
             </div>
           </div>
-          {secondSem?.length === 0 ? "" : 
+          {secondSem?.length === 0 ? (
+            ""
+          ) : (
             <div className="mt-10 shadow-sm rounded-lg ">
               <Table>
                 <TableHeader>
@@ -505,7 +486,7 @@ export function StudentPages() {
                 <p>GPA: {wpaSecond / totalCourseUnitSecond}</p>
               </div>
             </div>
-          }
+          )}
         </main>
       </div>
     </div>
