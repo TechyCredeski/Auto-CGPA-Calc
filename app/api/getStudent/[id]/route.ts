@@ -7,7 +7,6 @@ export type Props = {
 };
 
 export const GET = async (req: Request, { params: { id } }: Props) => {
-  // console.log()
   try {
     const getStudent = await prisma.studentList.findUnique({
       where: {

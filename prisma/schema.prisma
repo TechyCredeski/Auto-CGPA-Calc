@@ -35,12 +35,13 @@ model StudentList {
 
 model StudentResult {
   id             String       @id @default(cuid())
-  studentId      String      @unique
-  courseCode     String
+  studentId      String      
+  courseCode     String      @unique
   courseTitle    String
+  semester       String @default("First")
   unit           Int
   student        Student     @relation(fields: [studentId], references: [matric])
-  grade          String
+  grade          Float
 }
 
 model Course {

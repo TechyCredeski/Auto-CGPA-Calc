@@ -29,25 +29,178 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
-import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import axios, { AxiosResponse } from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { Dialog, DialogTrigger, DialogContent } from "@radix-ui/react-dialog";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+
+interface StudentResultDbs {
+  id: string;
+  studentId: string;
+  courseCode: string;
+  courseTitle: string;
+  unit: number;
+  grade: number;
+  semester: string;
+}
 
 interface RouteParams {
   id: string; // Assuming 'id' is a string
 }
 
 export function StudentPages() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [courseCode, setCourseCode] = useState("");
+  const [courseTitle, setCourseTitle] = useState("");
+  const [courseUnit, setCourseUnit] = useState(0);
+  const [firstSem, setFirstSem] = useState<StudentResultDbs[] | undefined>([]);
+  const [secondSem, setSecondSem] = useState<StudentResultDbs[] | undefined>(
+    []
+  );
+  const [grade, setGrade] = useState(0);
+  const [deleted, setDeleting] = useState(false);
   const { id } = useParams();
+  const [wpaFirst, setWpaFirst] = useState(0);
+  const [totalCourseUnitFirst, setTotalCourseUnitFirst] = useState(0);
+  const [wpaSecond, setWpaSecond] = useState(0);
+  const [totalCourseUnitSecond, setTotalCourseUnitSecond] = useState(0);
+  const [semester, setSemester] = useState<"First" | "Second">("First");
+  const [cgpa, setCgpa] = useState(0);
+  console.log(grade);
+
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  const triggerClick = () => {
+    if (buttonRef.current) {
+      buttonRef.current.click();
+    }
+  };
+
+  
+
+  const DeleteStudent = async (ids: string) => {
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/addStudentResult/${ids}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        toast.success("Successfully Deleted");
+        studentRefetchDB();
+      }
+      if (response.status === 500) {
+        toast.error("Error Deleting");
+      }
+      setDeleting(false);
+    } catch (error) {
+      toast.error("Error Deleting");
+      setDeleting(false);
+    }
+  };
+
+  const addStudentResult = async () => {
+    if (!courseCode || !courseTitle || courseUnit === 0) {
+      toast.error("You must fill one of the fields");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/addStudentResult/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseCode,
+          courseTitle,
+          courseUnit,
+          grade,
+          semester,
+        }),
+      });
+      console.log(response);
+      if (response.status === 200) {
+        setLoading(false);
+        studentRefetchDB();
+        triggerClick();
+        // refetch();
+        toast.success("Successfully Added student Result");
+      }
+      if (response.status === 404) {
+        setLoading(false);
+        toast.error("Course already exists");
+      }
+      if (response.status === 500) {
+        setLoading(false);
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("Something went wrong");
+    }
+  };
+
+  const { data: studentResultDB, refetch: studentRefetchDB } = useQuery({
+    queryKey: ["studentResultDB"],
+    queryFn: () =>
+      axios
+        .get(`/api/addStudentResult/${id}`)
+        .then((res: AxiosResponse<StudentResultDbs[]>) => res.data),
+  });
+
+  // console.log(wpa, totalCourseUnit);
+
+  useEffect(() => {
+    const First = studentResultDB?.filter((i) => i.semester === "First");
+    const Second = studentResultDB?.filter((i) => i.semester === "Second");
+    setFirstSem(First);
+    setSecondSem(Second);
+    // studentResultDB?.map((i) => {
+    //   setTotalCourseUnit((prev) => prev + i.unit);
+    //   setWpa((prev) => prev + i.unit * i.grade);
+    // });
+  }, [studentResultDB]);
+
+  useEffect(() => {
+    firstSem?.map((i) => {
+      setTotalCourseUnitFirst((prev) => prev + i.unit);
+      setWpaFirst((prev) => prev + i.unit * i.grade);
+    });
+  }, [firstSem]);
+
+  useEffect(() => {
+    setCgpa(
+      (wpaFirst + wpaSecond) / (totalCourseUnitFirst + totalCourseUnitSecond)
+    );
+  }, [wpaFirst, wpaSecond, totalCourseUnitFirst, totalCourseUnitSecond]);
+
+  useEffect(() => {
+    secondSem?.map((i) => {
+      setTotalCourseUnitSecond((prev) => prev + i.unit);
+      setWpaSecond((prev) => prev + i.unit * i.grade);
+    });
+  }, [secondSem]);
 
   const { data, refetch } = useQuery({
     queryKey: ["studentAlone"],
     queryFn: () => axios.get(`/api/getStudent/${id}`).then((res) => res.data),
   });
 
+  console.log(data);
+  console.log(cgpa);
 
   return (
     <div className="grid h-screen w-full min-h-screen lg:grid-cols-[280px_1fr]">
@@ -180,37 +333,88 @@ export function StudentPages() {
             <div className="flex justify-between w-[100%] ">
               <button>CGPA</button>
               <button className="border py-1 font-medium px-5 rounded-md">
-                {data?.cgpa}
+                {cgpa}
               </button>
             </div>
           </div>
           <Dialog>
             <DialogTrigger
               className="border-b-2 border-black  w-fit"
-              // ref={buttonRef}
+              ref={buttonRef}
             >
-              Add first Semester
+              {id && "Add Course"}
             </DialogTrigger>
             <DialogContent className="text-sm">
               <div className="flex flex-col gap-4">
                 <div className="flex gap-12 items-center">
-                  Matric No:{" "}
+                  Course Code{" "}
                   <input
+                    onChange={(e) => setCourseCode(e.currentTarget.value)}
                     // onChange={(e) => setMatricNo(e.currentTarget.value)}
                     className="border rounded-md py-2 outline-none px-2 w-40"
                     placeholder="Enter matric number"
                   />
                 </div>
-                <div className="flex gap-4 items-center">
-                  Student Name:{" "}
+                <div className="flex gap-12 items-center">
+                  Course Title:{" "}
                   <input
+                    onChange={(e) => setCourseTitle(e.currentTarget.value)}
                     // onChange={(e) => setStudentName(e.currentTarget.value)}
                     className="border rounded-md py-2 outline-none px-2 w-40"
                     placeholder="Chukunzemeka Solomon"
                   />
                 </div>
+                <div className="flex gap-12 items-center">
+                  <p>Course Unit</p>
+                  <Select onValueChange={(e) => setCourseUnit(parseInt(e))}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Choose couse unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3</SelectItem>
+                      <SelectItem value="4">4</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-12 items-center">
+                  <p>Semester</p>
+                  <Select
+                    onValueChange={(
+                      e: string extends "First" ? "First" : "Second"
+                    ) => setSemester(e)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Choose Semester" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="First">First Semester</SelectItem>
+                      <SelectItem value="Second">Second Semester</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-12 items-center">
+                  <p>Grade</p>
+                  <Select onValueChange={(e) => setGrade(parseFloat(e))}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Choose Grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="4.00">A1</SelectItem>
+                      <SelectItem value="3.50">A2</SelectItem>
+                      <SelectItem value="3.25">B1</SelectItem>
+                      <SelectItem value="3.00">B2</SelectItem>
+                      <SelectItem value="2.75">C1</SelectItem>
+                      <SelectItem value="2.50">C2</SelectItem>
+                      <SelectItem value="2.25">D1</SelectItem>
+                      <SelectItem value="2.00">D2</SelectItem>
+                      <SelectItem value="0.00">F</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <button
-                  // onClick={saveStudent}
+                  onClick={addStudentResult}
                   className={`border bg-[#51aa55] px-4 py-2  rounded-md text-sm ${
                     loading ? "pointer-events-none opacity-30" : ""
                   }  text-white  font-medium`}
@@ -220,7 +424,7 @@ export function StudentPages() {
               </div>
             </DialogContent>
           </Dialog>
-          <div className="border shadow-sm rounded-lg ">
+          <div className=" shadow-sm rounded-lg ">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -231,39 +435,77 @@ export function StudentPages() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">S001</TableCell>
-                  <TableCell className="font-medium">Alice Johnson</TableCell>
-                  <TableCell>Mathematics</TableCell>
-                  <TableCell>2.5</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">S002</TableCell>
-                  <TableCell className="font-medium">Bob Smith</TableCell>
-                  <TableCell>Science</TableCell>
-                  <TableCell>2.5</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">S003</TableCell>
-                  <TableCell className="font-medium">Ella Brown</TableCell>
-                  <TableCell>English</TableCell>
-                  <TableCell>2.5</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">S004</TableCell>
-                  <TableCell className="font-medium">David Lee</TableCell>
-                  <TableCell>History</TableCell>
-                  <TableCell>2.5</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">S005</TableCell>
-                  <TableCell className="font-medium">Sophia White</TableCell>
-                  <TableCell>Art</TableCell>
-                  <TableCell>2.5</TableCell>
-                </TableRow>
+                {firstSem?.map((student: StudentResultDbs) => (
+                  <TableRow key={student.id}>
+                    <TableCell className="font-medium">
+                      {student.courseCode}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {student.courseTitle}
+                    </TableCell>
+                    <TableCell>{student.unit}</TableCell>
+                    <TableCell>{student.grade}</TableCell>
+                    <TableCell>
+                      <button
+                        onClick={() => DeleteStudent(student.courseCode)}
+                        className={`bg-red-700  ${
+                          deleted ? "pointer-events-none opacity-30" : ""
+                        }  py-2 rounded-md px-5 text-white`}
+                      >
+                        Delete
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
+            <div className="pl-4 text-2xl pb-4">
+              <p className="text-sm">First semester</p>
+              <p>GPA: {wpaFirst / totalCourseUnitFirst}</p>
+            </div>
           </div>
+          {secondSem?.length === 0 ? "" : 
+            <div className="mt-10 shadow-sm rounded-lg ">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[150px]">Course Code</TableHead>
+                    <TableHead>Course Title</TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead>Grade</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {secondSem?.map((student: StudentResultDbs) => (
+                    <TableRow key={student.id}>
+                      <TableCell className="font-medium">
+                        {student.courseCode}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {student.courseTitle}
+                      </TableCell>
+                      <TableCell>{student.unit}</TableCell>
+                      <TableCell>{student.grade}</TableCell>
+                      <TableCell>
+                        <button
+                          onClick={() => DeleteStudent(student.courseCode)}
+                          className={`bg-red-700  ${
+                            deleted ? "pointer-events-none opacity-30" : ""
+                          }  py-2 rounded-md px-5 text-white`}
+                        >
+                          Delete
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="pl-4 text-2xl pb-4">
+                <p className="text-sm">Second semester</p>
+                <p>GPA: {wpaSecond / totalCourseUnitSecond}</p>
+              </div>
+            </div>
+          }
         </main>
       </div>
     </div>
